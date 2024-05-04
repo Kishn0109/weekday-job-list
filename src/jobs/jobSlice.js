@@ -16,6 +16,6 @@ export const jobSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {  } = jobSlice.actions;
+export const jobActions= jobSlice.actions;
 
 export default jobSlice.reducer;
