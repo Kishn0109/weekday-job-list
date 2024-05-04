@@ -11,7 +11,6 @@ export default function Jobs() {
     jobRole: "",
     minJdSalary: "",
   });
-  console.log(jobs)
   return (
     <div> 
       <Button

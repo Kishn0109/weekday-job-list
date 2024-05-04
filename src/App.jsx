@@ -1,12 +1,13 @@
 import "./App.css";
-import Button from "@mui/material/Button";
 import Jobs from "./jobs/Jobs";
+import Filters from "./Filter";
+import { Container } from "@mui/material";
 function App() {
   return (
-    <>
-      <Button variant="contained">Hello world</Button>
+    <Container maxWidth="xl">
+      <Filters />
       <Jobs />
-    </>
+    </Container>
   );
 }
 
