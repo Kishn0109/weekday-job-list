@@ -26,13 +26,8 @@ import useScroll from "./hooks/useScroll";
 
 export default function Jobs() {
   const [offset, setOffset] = useState(0);
-  const { jobs, isLoading } = useGetJobs(offset, {
-    minExp: null,
-    companyName: "",
-    location: "",
-    jobRole: "",
-    minJdSalary: "",
-  });
+
+  const { jobs, isLoading } = useGetJobs(offset);
   const elementRef = useRef(null);
   const threshold = 80; // Set your threshold value here
   const scrollPercentage = useScroll(elementRef, threshold);
@@ -163,7 +158,13 @@ export default function Jobs() {
             </Grid>
           ))}
           {isLoading && (
-            <Grid item xs={12} padding={2} display={"flex"} justifyContent={"center"}>
+            <Grid
+              item
+              xs={12}
+              padding={2}
+              display={"flex"}
+              justifyContent={"center"}
+            >
               <CircularProgress />
             </Grid>
           )}

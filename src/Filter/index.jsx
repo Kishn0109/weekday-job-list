@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 const experiences = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 const remoteOptions = ["In-office", "Hybrid", "Remote"];
 const minBaseSalaryOption = [...new Array(7)].map(
-  (_, index) => index + 10 + "L"
+  (_, index) =>  (index+1)*10 + "L"
 );
 const roleOptions = ["Backend", "Frontend", "Flutter"];
 export function extractExistingParams(searchParams) {
