@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { jobActions } from "../jobSlice";
 
@@ -6,10 +6,12 @@ const myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 export default function useGetJobs(offset = 0, params) {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   const { jdList } = useSelector((state) => state.jobs);
   const { minExp, companyName, location, jobRole, minJdSalary } = params;
-  
+
   const getJobs = () => {
+    setIsLoading(true);
     const body = JSON.stringify({
       limit: 10,
       offset: offset,
@@ -27,7 +29,8 @@ export default function useGetJobs(offset = 0, params) {
       .then(({ jdList, totalCount }) => {
         dispatch(jobActions.add(jdList));
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
   };
 
   const filterJobs = (jd) => {
@@ -49,5 +52,5 @@ export default function useGetJobs(offset = 0, params) {
   useEffect(() => {
     getJobs();
   }, [offset]);
-  return jdList.filter(filterJobs);
+  return { jobs: jdList.filter(filterJobs), isLoading };
 }

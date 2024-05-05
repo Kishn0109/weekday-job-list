@@ -1,13 +1,15 @@
 import "./App.css";
 import Jobs from "./jobs/Jobs";
 import Filters from "./Filter";
-import { Container } from "@mui/material";
+import { Box, Container, Stack } from "@mui/material";
 function App() {
   return (
-    <Container maxWidth="xl">
-      <Filters />
+    <Stack height={"100vh"} border={2}>
+      <Container xs="">
+        <Filters />
+      </Container>
       <Jobs />
-    </Container>
+    </Stack>
   );
 }
 
