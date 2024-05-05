@@ -3,42 +3,40 @@ import useGetJobs from "./hooks/useGetJobs";
 import NotFoundImage from "../assets/nothing-found.png";
 import {
   Box,
-  Button,
-  CardActions,
   CircularProgress,
   Container,
   Grid,
   Stack,
   Typography,
 } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import useScroll from "./hooks/useScroll";
-
-// const Item = styled(Box)(({ theme }) => ({
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   flexGrow: 1,
-//   marginLeft:"auto",
-//   marginRight:"auto",
-//   marginTop:"auto"
-// }));
+import useIntersectionObserver from "./hooks/useIntersectionObserver";
+import Chunk from "./Chunk";
 
 export default function Jobs() {
   const [offset, setOffset] = useState(0);
+  // state which take care of how many jobs should render on the Ui
+  const [activeChunk, setActiveChunk] = useState([0, 1]);
 
-  const { jobs, isLoading } = useGetJobs(offset);
+  // A hook which return jobs isLoading and list of all the jobs in chunks to keep smooth infinite loading
+  const { jobs, isLoading, chunks } = useGetJobs(offset,setActiveChunk);
+
+  // Ref's for Infinite scroll 
   const elementRef = useRef(null);
-  const threshold = 80; // Set your threshold value here
-  const scrollPercentage = useScroll(elementRef, threshold);
-  const limit = 12;
 
+  // return IsActive true when element comes in the dom
+  const [loaderRef, isActive] = useIntersectionObserver({
+    root: elementRef.current,
+  });
+
+  // When ever loader element come in Ui fetch the data 
   useEffect(() => {
-    if (scrollPercentage >= threshold) {
-      setOffset((state) => state + 10);
+    if (isActive) {
+      setOffset((state) => state + 12); 
     }
-  }, [scrollPercentage]);
+  }, [isActive]);
 
+
+  // Show Loader when first time fetch the jobs
   if (isLoading && !jobs?.length) {
     return (
       <Stack
@@ -55,6 +53,8 @@ export default function Jobs() {
       </Stack>
     );
   }
+
+  // show Result not found if job does not match
   if (!jobs?.length) {
     return (
       <Stack
@@ -66,20 +66,22 @@ export default function Jobs() {
         justifyContent={"center"}
         flex={1}
       >
-        <div>
+        <Box>
           <img
             src={NotFoundImage}
             alt="not found"
             loading="lazy"
             style={{ width: "100px" }}
           />
-        </div>
+        </Box>
         <Typography variant="subtitle2">
           No Jobs available for this category at the moment
         </Typography>
       </Stack>
     );
   }
+
+  // List of jobs 
   return (
     <Box
       flex={1}
@@ -98,76 +100,27 @@ export default function Jobs() {
             paddingX: 2,
           }}
         >
-          {jobs.map((job) => (
-            <Grid item xs={6} sm={4} id={job.jdUid} padding={2}>
-              <Card sx={{ height: "100%" }} variant="outlined" color="neutral">
-                <CardContent sx={{ height: "100%" }}>
-                  <Stack direction={"column"} height={"100%"}>
-                    <Box flex={1}>
-                      <Stack direction={"row"} gap={2}>
-                        <img
-                          height={44}
-                          width={44}
-                          src={job.logoUrl}
-                          alt="logo"
-                        />
-                        <Box>
-                          <Typography variant="subtitle2">
-                            {job.companyName}
-                          </Typography>
-                          <Typography variant="subtitle1">
-                            {job.jobRole}
-                          </Typography>
-                          <Typography variant="body2">
-                            {job.location}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                      <Stack direction={"row"}>
-                        <Typography>Estimated Salary:</Typography>
-                        {job.minJdSalary && job.minJdSalary}
-                        {job.minJdSalary && job.maxJdSalary && " - "}
-                        {job.maxJdSalary && job.maxJdSalary} LPA
-                      </Stack>
-                      <Typography variant="h5">About Company</Typography>
-                      <Typography variant="subtitle2">
-                        {job.jobDetailsFromCompany}
-                      </Typography>
-                      {job.minExp && (
-                        <>
-                          <Typography variant="h6">
-                            Minimum Experience
-                          </Typography>
-                          <Typography variant="subtitle2">
-                            {job.minExp} years
-                          </Typography>
-                        </>
-                      )}
-                    </Box>
-                    <CardActions>
-                      <Button
-                        variant="contained"
-                        sx={{ width: "100%", marginTop: 4 }}
-                      >
-                        Easy Apply
-                      </Button>
-                    </CardActions>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-          {isLoading && (
-            <Grid
-              item
-              xs={12}
-              padding={2}
-              display={"flex"}
-              justifyContent={"center"}
-            >
-              <CircularProgress />
-            </Grid>
+          {chunks.map((jobs, index) =>
+            activeChunk.includes(index) ? (
+              <Chunk
+                jobs={jobs}
+                key={index}
+                index={index}
+                root={elementRef.current}
+                setActiveChunk={setActiveChunk}
+              />
+            ) : null
           )}
+          <Grid
+            item
+            xs={12}
+            padding={2}
+            display={"flex"}
+            justifyContent={"center"}
+            ref={loaderRef}
+          >
+            {isLoading && <CircularProgress />}
+          </Grid>
         </Grid>
       </Container>
     </Box>
