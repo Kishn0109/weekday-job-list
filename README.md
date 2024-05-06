@@ -1,6 +1,6 @@
 # Weekdays job listing application
 
-This is a simple guide on how to run a Vite-powered React application.
+This is a simple guide on how to run a application.
 
 ## Prerequisites
 
