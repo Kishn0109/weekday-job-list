@@ -40,8 +40,8 @@ export default function Chunk({ jobs, setActiveChunk, index, root }) {
   return (
     <>
       <Grid item xs={12} height={0} ref={chunkStartDivider}></Grid>
-      {jobs.map((job) => (
-        <Grid item xs={6} sm={4} id={job.jdUid} padding={2} key={job.jdUid}>
+      {jobs.map((job,index) => (
+        <Grid item xs={6} sm={4} id={job.jdUid} padding={2} key={index}>
           <Card sx={{ height: "100%" }} variant="outlined" color="neutral">
             <CardContent sx={{ height: "100%" }}>
               <Stack direction={"column"} height={"100%"}>
